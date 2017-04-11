@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,6 +36,7 @@ namespace huypq.EmailSender
             InitializeComponent();
             DataContext = _vm;
             _timer.Tick += Timer_Tick;
+            //SendGrid.Send("noreply@luoithepvinhphat1.com", "kudo183@gmail.com", "test without MX record", "test");
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -103,7 +105,11 @@ namespace huypq.EmailSender
                     body = mailContents[1];
                 }
 
-                EmailSender.Send(_vm.MailFrom, mailAddress, subject, body);
+                //cannot send because server IP is in black list, can check with https://mxtoolbox.com/SuperTool.aspx
+                //EmailSender.Send(_vm.MailFrom, mailAddress, subject, body);
+
+                SendGrid.Send(_vm.MailFrom, mailAddress, subject, body);
+                   
                 AddMessageAndScrollToEnd(mailAddress);
                 AddMessageAndScrollToEnd(subject);
                 AddMessageAndScrollToEnd(body);
