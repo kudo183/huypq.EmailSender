@@ -19,7 +19,7 @@ namespace huypq.EmailSender
             client.UseDefaultCredentials = false;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
             client.EnableSsl = true;
-            client.Credentials = new NetworkCredential("apikey", "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");
+            client.Credentials = new NetworkCredential("apikey", "");//need input key runtime instead of set in code.
             try
             {
                 client.Send(from, to, subject, body);
