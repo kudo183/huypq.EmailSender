@@ -106,21 +106,6 @@ namespace huypq.EmailSender
                 }
 
                 var message = new MailMessage(_vm.MailFrom, mailAddress, subject, body);
-                var pks = DKIM.PrivateKeySigner.Create(@"-----BEGIN RSA PRIVATE KEY-----
-MIICXgIBAAKBgQDIrjKcACPBYfnggPyWtuhHtj4EdAnD+1Q6deAwhj6vRXgxgVpa
-ArMzEhYwSTVG2b9j7uA671UyMbTQY4802EEkpWD+gMsykIM9FnX3n8x/BM5D4I8Q
-aoWgl2dv27teXrU8yTxjITkjfYGoC2XHGIl12mWvDWlDc23it2ulHhxsmwIDAQAB
-AoGBAMAEjkBekdfT27hJM2cylIcphaXVMhLoROu7JkzH5urmWd9kmgNOWhEf2UNS
-iTvF1i/UvZEmuCpTDWPoH3q9AXZRVi6VVpKBo5Jk5NLJMHJiAdSJTp/B3os1bfdP
-ftwk+jiK1UDkDawQ/7wiNESwyKTo7YxjrcwCBnrJ4adpfPqhAkEA4tEQwhG2v8oi
-0tnnxT2ApgVFu2c6lcUJlXgJuOMJExyoZ1keI3SqMOY3I6LmAYsVxWwp2M+o16Y+
-sHixeoPKhwJBAOKAQKcTEZs8Jd9hor9CLkFPKcPiHqBsNcwXa4CqmGT+zAu906RN
-nBppH+9aV2CmuiZfP6s1rx6JngyMXREZ7k0CQQDKRoRZbo6577yqqaYmoriuVplf
-jaoTkwr+/3Q8LE0VfEM7F6DnIc39mfGmmEnjKnSaAeI39smuuBXEL36nsgzVAkEA
-rBoxhgG6Pg784/gnFlZuGRfSr1FwXgr68aHWAIUfmJX2avGJD+4csACy0Eb/36Ow
-DBoRocD/2B9PJU++I5FlfQJAPJrEGatvGuYnkiTHC3gFOtNn1SICrXUKHbtoxBC0
-own4bVXnIYUpOigJpMJAG5Vk2enxWkjrAUjUaAEzYf6nCg==
------END RSA PRIVATE KEY-----");
 
                 var headers = new string[] { "From", "To", "Content-Type", "Date" };
 
