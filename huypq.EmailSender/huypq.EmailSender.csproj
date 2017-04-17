@@ -56,6 +56,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DKIM\Constant.cs" />
+    <Compile Include="DKIM\DkimCanonicalizer.cs" />
+    <Compile Include="DKIM\DomainKeyCanonicalizer.cs" />
+    <Compile Include="DKIM\Email.cs" />
+    <Compile Include="DKIM\EmailHeader.cs" />
+    <Compile Include="DKIM\MailMessageText.cs" />
+    <Compile Include="DKIM\NameValueCollectionExtensions.cs" />
+    <Compile Include="DKIM\OpenSslKey.cs" />
+    <Compile Include="DKIM\SecureSigner.cs" />
+    <Compile Include="DKIM\SignMailMessage.cs" />
+    <Compile Include="DKIM\WhiteSpace.cs" />
     <Compile Include="SendGrid.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -105,6 +116,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

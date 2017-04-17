@@ -14,8 +14,23 @@
     </Window.Resources>
     <StackPanel>
         <StackPanel Orientation="Horizontal" Margin="{StaticResource spMargin}">
+            <TextBlock Text="Mail Domain: " Width="{StaticResource titleWidth}"/>
+            <TextBox Text="{Binding MailDomain, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="{StaticResource spMargin}">
             <TextBlock Text="Mail From: " Width="{StaticResource titleWidth}"/>
-            <TextBox Text="{Binding MailFrom}" Width="{StaticResource contentWidth}"/>
+            <TextBox Text="{Binding MailFrom}" Width="200"/>
+            <TextBlock Text="@"/>
+            <TextBlock Text="{Binding MailDomain}" Width="200"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="{StaticResource spMargin}">
+            <TextBlock Text="DKIM Selecttor: " Width="{StaticResource titleWidth}"/>
+            <TextBox Text="{Binding DkimSelector}" Width="200"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="{StaticResource spMargin}">
+            <TextBlock Text="DKIM Private Key Path: " Width="{StaticResource titleWidth}"/>
+            <TextBox Text="{Binding DkimPrivateKeyPath}" Width="{StaticResource contentWidth}"/>
+            <Button Content="..." Width="30" Click="DkimPrivateKeyPathClick"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="{StaticResource spMargin}">
             <TextBlock Text="Mail Folder Path: " Width="{StaticResource titleWidth}"/>
@@ -24,7 +39,7 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="{StaticResource spMargin}">
             <TextBlock Text="Interval (in seconds): " Width="{StaticResource titleWidth}"/>
-            <TextBox Text="{Binding Interval}" Width="{StaticResource contentWidth}"/>
+            <TextBox Text="{Binding Interval}" Width="50"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Content="Run" Width="50" Margin="5" IsEnabled="{Binding CanRun}" Click="RunClick"/>

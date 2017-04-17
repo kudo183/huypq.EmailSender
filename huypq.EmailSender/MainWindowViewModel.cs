@@ -49,6 +49,21 @@ namespace huypq.EmailSender
             }
         }
 
+        private string mailDomain;
+
+        public string MailDomain
+        {
+            get { return mailDomain; }
+            set
+            {
+                if (Equals(mailDomain, value))
+                    return;
+
+                mailDomain = value;
+                OnPropertyChanged();
+            }
+        }
+
         private string mailFrom;
 
         public string MailFrom
@@ -60,6 +75,36 @@ namespace huypq.EmailSender
                     return;
 
                 mailFrom = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string dkimSelector;
+
+        public string DkimSelector
+        {
+            get { return dkimSelector; }
+            set
+            {
+                if (Equals(dkimSelector, value))
+                    return;
+
+                dkimSelector = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string dkimPrivateKeyPath;
+
+        public string DkimPrivateKeyPath
+        {
+            get { return dkimPrivateKeyPath; }
+            set
+            {
+                if (Equals(dkimPrivateKeyPath, value))
+                    return;
+
+                dkimPrivateKeyPath = value;
                 OnPropertyChanged();
             }
         }

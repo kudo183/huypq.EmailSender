@@ -105,11 +105,33 @@ namespace huypq.EmailSender
                     body = mailContents[1];
                 }
 
-                //cannot send because server IP is in black list, can check with https://mxtoolbox.com/SuperTool.aspx
-                //EmailSender.Send(_vm.MailFrom, mailAddress, subject, body);
+                var message = new MailMessage(_vm.MailFrom, mailAddress, subject, body);
+                var pks = DKIM.PrivateKeySigner.Create(@"-----BEGIN RSA PRIVATE KEY-----
+MIICXgIBAAKBgQDIrjKcACPBYfnggPyWtuhHtj4EdAnD+1Q6deAwhj6vRXgxgVpa
+ArMzEhYwSTVG2b9j7uA671UyMbTQY4802EEkpWD+gMsykIM9FnX3n8x/BM5D4I8Q
+aoWgl2dv27teXrU8yTxjITkjfYGoC2XHGIl12mWvDWlDc23it2ulHhxsmwIDAQAB
+AoGBAMAEjkBekdfT27hJM2cylIcphaXVMhLoROu7JkzH5urmWd9kmgNOWhEf2UNS
+iTvF1i/UvZEmuCpTDWPoH3q9AXZRVi6VVpKBo5Jk5NLJMHJiAdSJTp/B3os1bfdP
+ftwk+jiK1UDkDawQ/7wiNESwyKTo7YxjrcwCBnrJ4adpfPqhAkEA4tEQwhG2v8oi
+0tnnxT2ApgVFu2c6lcUJlXgJuOMJExyoZ1keI3SqMOY3I6LmAYsVxWwp2M+o16Y+
+sHixeoPKhwJBAOKAQKcTEZs8Jd9hor9CLkFPKcPiHqBsNcwXa4CqmGT+zAu906RN
+nBppH+9aV2CmuiZfP6s1rx6JngyMXREZ7k0CQQDKRoRZbo6577yqqaYmoriuVplf
+jaoTkwr+/3Q8LE0VfEM7F6DnIc39mfGmmEnjKnSaAeI39smuuBXEL36nsgzVAkEA
+rBoxhgG6Pg784/gnFlZuGRfSr1FwXgr68aHWAIUfmJX2avGJD+4csACy0Eb/36Ow
+DBoRocD/2B9PJU++I5FlfQJAPJrEGatvGuYnkiTHC3gFOtNn1SICrXUKHbtoxBC0
+own4bVXnIYUpOigJpMJAG5Vk2enxWkjrAUjUaAEzYf6nCg==
+-----END RSA PRIVATE KEY-----");
 
-                SendGrid.Send(_vm.MailFrom, mailAddress, subject, body);
-                   
+                var headers = new string[] { "From", "To", "Content-Type", "Date" };
+
+                DKIM.SignMailMessage.Sign(ref message, Encoding.UTF8, _dkimPrivateKeySigner, _vm.MailDomain, _vm.DkimSelector, headers);
+
+                //cannot send because server IP is in black list, can check with https://mxtoolbox.com/SuperTool.aspx
+
+                EmailSender.Send(message);
+                SendGrid.Send(message);
+                new SmtpClient().Send(message);
+
                 AddMessageAndScrollToEnd(mailAddress);
                 AddMessageAndScrollToEnd(subject);
                 AddMessageAndScrollToEnd(body);
@@ -117,12 +139,12 @@ namespace huypq.EmailSender
             }
         }
 
-        System.Windows.Forms.FolderBrowserDialog _folderDialog = new System.Windows.Forms.FolderBrowserDialog();
+        System.Windows.Forms.FolderBrowserDialog _mailFolderPathFD = new System.Windows.Forms.FolderBrowserDialog();
         void MailFolderPathClick(object sender, RoutedEventArgs e)
         {
-            if (_folderDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (_mailFolderPathFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                _vm.MailFolderPath = _folderDialog.SelectedPath;
+                _vm.MailFolderPath = _mailFolderPathFD.SelectedPath;
                 _contentDirectoryInfo = new System.IO.DirectoryInfo(_vm.MailFolderPath);
 
                 var subjectTemplatePath = System.IO.Path.Combine(_vm.MailFolderPath, SubjectTemplateFileName);
@@ -136,6 +158,17 @@ namespace huypq.EmailSender
                 {
                     _bodyTemplate = System.IO.File.ReadAllText(bodyTemplatePath);
                 }
+            }
+        }
+
+        Microsoft.Win32.OpenFileDialog _dkimPrivateKeyPathFD = new Microsoft.Win32.OpenFileDialog();
+        DKIM.IPrivateKeySigner _dkimPrivateKeySigner;
+        void DkimPrivateKeyPathClick(object sender, RoutedEventArgs e)
+        {
+            if (_dkimPrivateKeyPathFD.ShowDialog() == true)
+            {
+                _vm.DkimPrivateKeyPath = _dkimPrivateKeyPathFD.FileName;
+                _dkimPrivateKeySigner = DKIM.PrivateKeySigner.LoadFromFile(_vm.DkimPrivateKeyPath);
             }
         }
 

@@ -22,7 +22,25 @@ namespace huypq.EmailSender
             client.Credentials = new NetworkCredential("apikey", "");//need input key runtime instead of set in code.
             try
             {
-                client.Send(from, to, subject, body);
+                client.Send(new MailMessage(from, to, subject, body));
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public static void Send(MailMessage message)
+        {
+            var client = new SmtpClient();
+            client.Host = "smtp.sendgrid.net";
+            client.Port = 587;
+            client.UseDefaultCredentials = false;
+            client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential("apikey", "");//need input key runtime instead of set in code.
+            try
+            {
+                client.Send(message);
             }
             catch (Exception ex)
             {
