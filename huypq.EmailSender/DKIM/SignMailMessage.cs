@@ -11,7 +11,7 @@ namespace huypq.EmailSender.DKIM
         static DkimCanonicalizationAlgorithm dkimHeaderCanonicalization = DkimCanonicalizationAlgorithm.Simple;
         static DkimCanonicalizationAlgorithm dkimBodyCanonicalization = DkimCanonicalizationAlgorithm.Simple;
 
-        static SigningAlgorithm signingAlgorithm = SigningAlgorithm.RSASha256;
+        static SigningAlgorithm dkimSigningAlgorithm = SigningAlgorithm.RSASha1;
 
         public static void Sign(ref MailMessage message, Encoding encoding, IPrivateKeySigner privateKeySigner, string domain, string selector, string[] headersToSign)
         {
@@ -239,7 +239,7 @@ namespace huypq.EmailSender.DKIM
 
         private static string GetAlgorithmName()
         {
-            switch (signingAlgorithm)
+            switch (dkimSigningAlgorithm)
             {
                 case SigningAlgorithm.RSASha1:
                     {
@@ -260,7 +260,7 @@ namespace huypq.EmailSender.DKIM
         {
             var cb = DkimCanonicalizer.CanonicalizeBody(body, dkimBodyCanonicalization);
 
-            return Convert.ToBase64String(privateKeySigner.Hash(encoding.GetBytes(cb), signingAlgorithm));
+            return Convert.ToBase64String(privateKeySigner.Hash(encoding.GetBytes(cb), dkimSigningAlgorithm));
         }
 
         private static string GenerateDkimSignature(Email email, Encoding encoding, IPrivateKeySigner privateKeySigner, string[] headersToSign)
@@ -278,7 +278,7 @@ namespace huypq.EmailSender.DKIM
             var headers = DkimCanonicalizer.CanonicalizeHeaders(email.Headers, dkimHeaderCanonicalization, true, headersToSign);
 
             // assumes signature ends with "b="
-            return Convert.ToBase64String(privateKeySigner.Sign(encoding.GetBytes(headers), signingAlgorithm));
+            return Convert.ToBase64String(privateKeySigner.Sign(encoding.GetBytes(headers), dkimSigningAlgorithm));
         }
     }
 }

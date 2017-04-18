@@ -154,6 +154,20 @@ namespace huypq.EmailSender
             }
         }
 
+        private int maxMessage;
+        public int MaxMessage
+        {
+            get { return maxMessage; }
+            set
+            {
+                if (Equals(maxMessage, value))
+                    return;
+
+                maxMessage = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)

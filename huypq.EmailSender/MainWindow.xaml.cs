@@ -1,4 +1,5 @@
-﻿using System;
+﻿using huypq.EmailSender.Properties;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -35,13 +36,67 @@ namespace huypq.EmailSender
         {
             InitializeComponent();
             DataContext = _vm;
+            Loaded += MainWindow_Loaded;
+            Closed += MainWindow_Closed;
             _timer.Tick += Timer_Tick;
+
+            //var mailMessage = new System.Net.Mail.MailMessage("gaucon.net<noreply@gaucon.net>", "quochuy101@gmail.com");
+
+            //mailMessage.Subject = "xác nhận tài khoản tại gaucon.net";//dkim fail because has unicode character          
+            ////mailMessage.Subject = "xac nhan tai khoan tai gaucon.net";
+
+            //mailMessage.Body = "test";
+            ////mailMessage.Body = System.IO.File.ReadAllText(@"c:\bodytemplate.html");
+            ////mailMessage.BodyTransferEncoding = System.Net.Mime.TransferEncoding.QuotedPrintable;
+            ////mailMessage.IsBodyHtml = true;
+
+            ////var headers = new string[] { "From", "To", "Content-Type", "Date" };
+            //var headers = new string[] { "From", "To", "Content-Type" };
+
+            //DKIM.SignMailMessage.Sign(ref mailMessage, Encoding.UTF8, _dkimPrivateKeySigner, _vm.MailDomain, _vm.DkimSelector, headers);
+            //try
+            //{
+            //    new SmtpClient("localhost").Send(mailMessage);
+            //}
+            //catch (Exception ex)
+            //{
+
+            //}
+
             //SendGrid.Send("noreply@luoithepvinhphat1.com", "kudo183@gmail.com", "test without MX record", "test");
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            _vm.MailDomain = Settings.Default.MailDomain;
+            _vm.MailFrom = Settings.Default.MailFrom;
+            _vm.DkimPrivateKeyPath = Settings.Default.DkimPrivateKeyPath;
+            _vm.DkimSelector = Settings.Default.DkimSelector;
+            _vm.MailFolderPath = Settings.Default.MailFolderPath;
+            _vm.Interval = Settings.Default.Interval;
+            _vm.MaxMessage = Settings.Default.MaxMessage;
+            LoadMailContentFolderAndTemplate();
+            LoadDkimPrivateKey();
+        }
+
+        private void MainWindow_Closed(object sender, EventArgs e)
+        {
+            Settings.Default.MailDomain = _vm.MailDomain;
+            Settings.Default.MailFrom = _vm.MailFrom;
+            Settings.Default.DkimPrivateKeyPath = _vm.DkimPrivateKeyPath;
+            Settings.Default.DkimSelector = _vm.DkimSelector;
+            Settings.Default.MailFolderPath = _vm.MailFolderPath;
+            Settings.Default.Interval = _vm.Interval;
+            Settings.Default.MaxMessage = _vm.MaxMessage;
+            Settings.Default.Save();
         }
 
         private void Timer_Tick(object sender, EventArgs e)
         {
             AddMessageAndScrollToEnd(DateTime.UtcNow.ToString());
+
+            if (_contentDirectoryInfo == null)
+                return;
 
             foreach (var fi in _contentDirectoryInfo.GetFiles())
             {
@@ -85,7 +140,7 @@ namespace huypq.EmailSender
                     {
                         body = _bodyTemplate.Replace(bodyContent[0], bodyContent[1]);
 
-                        //replace another key
+                        //replace other key
                         for (var i = 2; i < mailContents.Length; i++)
                         {
                             bodyContent = mailContents[i].Split('\t');
@@ -105,22 +160,31 @@ namespace huypq.EmailSender
                     body = mailContents[1];
                 }
 
-                var message = new MailMessage(_vm.MailFrom, mailAddress, subject, body);
+                var message = new MailMessage(string.Format("{0}@{1}", _vm.MailFrom, _vm.MailDomain), mailAddress, subject, body);
 
-                var headers = new string[] { "From", "To", "Content-Type", "Date" };
+                //have problem with Subject, Date
+                var headers = new string[] { "From", "To", "Content-Type" };
 
                 DKIM.SignMailMessage.Sign(ref message, Encoding.UTF8, _dkimPrivateKeySigner, _vm.MailDomain, _vm.DkimSelector, headers);
 
                 //cannot send because server IP is in black list, can check with https://mxtoolbox.com/SuperTool.aspx
+                try
+                {
+                    //EmailSender.Send(message);
+                    //SendGrid.Send(message);
+                    new SmtpClient("localhost").Send(message);
 
-                EmailSender.Send(message);
-                SendGrid.Send(message);
-                new SmtpClient().Send(message);
-
-                AddMessageAndScrollToEnd(mailAddress);
-                AddMessageAndScrollToEnd(subject);
-                AddMessageAndScrollToEnd(body);
-                fi.Delete();
+                    var sb = new StringBuilder();
+                    sb.AppendLine(mailAddress);
+                    sb.AppendLine(subject);
+                    sb.AppendLine(body);
+                    AddMessageAndScrollToEnd(sb.ToString());
+                    fi.Delete();
+                }
+                catch (Exception ex)
+                {
+                    AddMessageAndScrollToEnd(ex.Message);
+                }
             }
         }
 
@@ -130,19 +194,27 @@ namespace huypq.EmailSender
             if (_mailFolderPathFD.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 _vm.MailFolderPath = _mailFolderPathFD.SelectedPath;
+                LoadMailContentFolderAndTemplate();
+            }
+        }
+
+        void LoadMailContentFolderAndTemplate()
+        {
+            if (System.IO.Directory.Exists(_vm.MailFolderPath) == true)
+            {
                 _contentDirectoryInfo = new System.IO.DirectoryInfo(_vm.MailFolderPath);
+            }
 
-                var subjectTemplatePath = System.IO.Path.Combine(_vm.MailFolderPath, SubjectTemplateFileName);
-                if (System.IO.File.Exists(subjectTemplatePath) == true)
-                {
-                    _subjectTemplate = System.IO.File.ReadAllText(subjectTemplatePath);
-                }
+            var subjectTemplatePath = System.IO.Path.Combine(_vm.MailFolderPath, SubjectTemplateFileName);
+            if (System.IO.File.Exists(subjectTemplatePath) == true)
+            {
+                _subjectTemplate = System.IO.File.ReadAllText(subjectTemplatePath);
+            }
 
-                var bodyTemplatePath = System.IO.Path.Combine(_vm.MailFolderPath, BodyTemplateFileName);
-                if (System.IO.File.Exists(bodyTemplatePath) == true)
-                {
-                    _bodyTemplate = System.IO.File.ReadAllText(bodyTemplatePath);
-                }
+            var bodyTemplatePath = System.IO.Path.Combine(_vm.MailFolderPath, BodyTemplateFileName);
+            if (System.IO.File.Exists(bodyTemplatePath) == true)
+            {
+                _bodyTemplate = System.IO.File.ReadAllText(bodyTemplatePath);
             }
         }
 
@@ -153,26 +225,17 @@ namespace huypq.EmailSender
             if (_dkimPrivateKeyPathFD.ShowDialog() == true)
             {
                 _vm.DkimPrivateKeyPath = _dkimPrivateKeyPathFD.FileName;
-                _dkimPrivateKeySigner = DKIM.PrivateKeySigner.LoadFromFile(_vm.DkimPrivateKeyPath);
+                LoadDkimPrivateKey();
             }
         }
 
-        //void BodyTemplatePathClick(object sender, RoutedEventArgs e)
-        //{
-        //    var dlg = new Microsoft.Win32.OpenFileDialog();
-
-        //    dlg.DefaultExt = ".html";
-        //    dlg.Filter = "Html (*.html)|*.html|Text (*.txt)|*.txt";
-
-        //    if (dlg.ShowDialog() == true)
-        //    {
-        //        _vm.MailBodyTemplatePath = dlg.FileName;
-        //        _bodyTemplate = System.IO.File.ReadAllText(_vm.MailBodyTemplatePath);
-
-        //        var rootPath = System.IO.Path.GetDirectoryName(_vm.MailBodyTemplatePath);
-        //        _contentDirectoryInfo = new System.IO.DirectoryInfo(System.IO.Path.Combine(rootPath, "content"));
-        //    }
-        //}
+        void LoadDkimPrivateKey()
+        {
+            if (System.IO.File.Exists(_vm.DkimPrivateKeyPath) == true)
+            {
+                _dkimPrivateKeySigner = DKIM.PrivateKeySigner.LoadFromFile(_vm.DkimPrivateKeyPath);
+            }
+        }
 
         void RunClick(object sender, RoutedEventArgs e)
         {
@@ -189,13 +252,16 @@ namespace huypq.EmailSender
             _timer.Stop();
         }
 
+        int MaxMessage = 30;
         void AddMessageAndScrollToEnd(string msg)
         {
+            if (_vm.Messages.Count == _vm.MaxMessage)
+            {
+                _vm.Messages.RemoveAt(0);
+            }
+
             _vm.Messages.Add(msg);
-
-            if (msgListBox.Items.Count == 0)
-                return;
-
+            
             msgListBox.SelectedIndex = msgListBox.Items.Count - 1;
             msgListBox.ScrollIntoView(msgListBox.SelectedItem);
         }

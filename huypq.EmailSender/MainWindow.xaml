@@ -45,6 +45,10 @@
             <Button Content="Run" Width="50" Margin="5" IsEnabled="{Binding CanRun}" Click="RunClick"/>
             <Button Content="Stop" Width="50" Margin="5" IsEnabled="{Binding CanStop}" Click="StopClick"/>
         </StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="{StaticResource spMargin}">
+            <TextBlock Text="Max message: " Width="{StaticResource titleWidth}"/>
+            <TextBox Text="{Binding MaxMessage}" Width="50"/>
+        </StackPanel>
         <ListBox Height="300" x:Name="msgListBox" Margin="10" ItemsSource="{Binding Messages}" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
     </StackPanel>
 </Window>
