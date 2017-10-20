@@ -19,7 +19,7 @@
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="{StaticResource spMargin}">
             <TextBlock Text="Password: " Width="{StaticResource titleWidth}"/>
-            <TextBox Text="{Binding Password}" Width="200"/>
+            <PasswordBox x:Name="passwordBox" PasswordChanged="passwordBox_PasswordChanged" Width="200"/>
         </StackPanel>
         <StackPanel Orientation="Horizontal" Margin="{StaticResource spMargin}">
             <TextBlock Text="Mail Folder Path: " Width="{StaticResource titleWidth}"/>

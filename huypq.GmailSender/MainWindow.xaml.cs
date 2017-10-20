@@ -45,7 +45,6 @@ namespace huypq.GmailSender
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             _vm.GmailAccount = Settings.Default.GmailAccount;
-            _vm.Password = Settings.Default.Password;
             _vm.MailFolderPath = Settings.Default.MailFolderPath;
             _vm.Interval = Settings.Default.Interval;
             _vm.MaxMessage = Settings.Default.MaxMessage;
@@ -55,7 +54,6 @@ namespace huypq.GmailSender
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             Settings.Default.GmailAccount = _vm.GmailAccount;
-            Settings.Default.Password = _vm.Password;
             Settings.Default.MailFolderPath = _vm.MailFolderPath;
             Settings.Default.Interval = _vm.Interval;
             Settings.Default.MaxMessage = _vm.MaxMessage;
@@ -211,6 +209,11 @@ namespace huypq.GmailSender
             };
             client.Send(_vm.GmailAccount, _vm.GmailAccount, "test", "test");
             AddMessageAndScrollToEnd("Test send mail success.");
+        }
+
+        private void passwordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            _vm.Password = passwordBox.Password;
         }
     }
 }
