@@ -87,7 +87,7 @@ namespace huypq.GmailSender
                     continue;
                 }
 
-                var emailTemplate = _emailTemplateDictionary[mailContents[0]];
+                var emailTemplate = _emailTemplateDictionary[mailContents[0].ToLower()];
                 var subject = emailTemplate.SubjectTemplate;
                 var body = emailTemplate.BodyTemplate;
                 var mailAddress = string.Empty;
