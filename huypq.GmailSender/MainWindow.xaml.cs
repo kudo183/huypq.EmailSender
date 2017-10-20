@@ -161,6 +161,11 @@ namespace huypq.GmailSender
                 _contentDirectoryInfo = new System.IO.DirectoryInfo(_vm.MailFolderPath);
             }
 
+            if (_contentDirectoryInfo == null)
+            {
+                return;
+            }
+
             foreach (var fi in _contentDirectoryInfo.GetFiles())
             {
                 var lowerName = fi.Name.ToLower();
