@@ -73,41 +73,47 @@ namespace huypq.GmailSender
             if (_contentDirectoryInfo == null)
                 return;
 
-            foreach (var fi in _contentDirectoryInfo.GetFiles())
+            try
             {
-                var lowerName = fi.Name.ToLower();
-                if (lowerName.EndsWith(SubjectTemplateFileNameSubfix) == true || lowerName.EndsWith(BodyTemplateFileNameSubfix) == true)
+                foreach (var fi in _contentDirectoryInfo.GetFiles())
                 {
-                    continue;
-                }
-
-                var mailContents = System.IO.File.ReadAllLines(fi.FullName);
-                if (mailContents.Length < 2)
-                {
-                    continue;
-                }
-
-                var emailTemplate = _emailTemplateDictionary[mailContents[0].ToLower()];
-                var subject = emailTemplate.SubjectTemplate;
-                var body = emailTemplate.BodyTemplate;
-                var mailAddress = string.Empty;
-
-                for (int i = 1; i < mailContents.Length; i++)
-                {
-                    var temp = mailContents[i].Split('\t');
-                    subject = subject.Replace(temp[0], temp[1]);
-                    body = body.Replace(temp[0], temp[1]);
-                    if (string.IsNullOrEmpty(mailAddress) == true && temp[0] == EmailKey)
+                    var lowerName = fi.Name.ToLower();
+                    if (lowerName.EndsWith(SubjectTemplateFileNameSubfix) == true || lowerName.EndsWith(BodyTemplateFileNameSubfix) == true)
                     {
-                        mailAddress = temp[1];
+                        continue;
                     }
-                }
 
-                var message = new MailMessage(_vm.GmailAccount, mailAddress, subject, body);
+                    var mailContents = System.IO.File.ReadAllLines(fi.FullName);
+                    if (mailContents.Length < 2)
+                    {
+                        continue;
+                    }
 
-                //cannot send because server IP is in black list, can check with https://mxtoolbox.com/SuperTool.aspx
-                try
-                {
+                    var contentKeyValue = new Dictionary<string, string>();
+                    for (int i = 1; i < mailContents.Length; i++)
+                    {
+                        var temp = mailContents[i].Split('\t');
+                        contentKeyValue.Add(temp[0], temp[1]);
+                    }
+
+                    var emailTemplate = _emailTemplateDictionary[contentKeyValue["$purpose"].ToLower()];
+                    var subject = emailTemplate.SubjectTemplate;
+                    var body = emailTemplate.BodyTemplate;
+                    var mailAddress = string.Empty;
+
+                    foreach (var item in contentKeyValue)
+                    {
+                        subject = subject.Replace(item.Key, item.Value);
+                        body = body.Replace(item.Key, item.Value);
+                        if (string.IsNullOrEmpty(mailAddress) == true && item.Key == EmailKey)
+                        {
+                            mailAddress = item.Value;
+                        }
+                    }
+
+                    var message = new MailMessage(_vm.GmailAccount, mailAddress, subject, body);
+
+                    //cannot send because server IP is in black list, can check with https://mxtoolbox.com/SuperTool.aspx
                     var client = new SmtpClient("smtp.gmail.com", 587)
                     {
                         Credentials = new NetworkCredential(_vm.GmailAccount, _vm.Password),
@@ -122,10 +128,10 @@ namespace huypq.GmailSender
                     AddMessageAndScrollToEnd(sb.ToString());
                     fi.Delete();
                 }
-                catch (Exception ex)
-                {
-                    AddMessageAndScrollToEnd(ex.Message);
-                }
+            }
+            catch (Exception ex)
+            {
+                AddMessageAndScrollToEnd(ex.Message);
             }
         }
 
