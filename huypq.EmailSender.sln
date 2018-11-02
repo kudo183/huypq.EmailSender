@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "huypq.EmailSender", "huypq.EmailSender\huypq.EmailSender.csproj", "{EA478F4C-3B94-42A8-BCCE-C38DC6CF4CCC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "huypq.GmailSender", "huypq.GmailSender\huypq.GmailSender.csproj", "{BD2190B5-5BFF-4BA3-BA6E-A975C033868F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "huypq.gmailsender.console", "huypq.gmailsender.console\huypq.gmailsender.console.csproj", "{500A7069-D860-4394-9251-64919A691F25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,8 +23,15 @@ Global
 		{BD2190B5-5BFF-4BA3-BA6E-A975C033868F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD2190B5-5BFF-4BA3-BA6E-A975C033868F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD2190B5-5BFF-4BA3-BA6E-A975C033868F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{500A7069-D860-4394-9251-64919A691F25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{500A7069-D860-4394-9251-64919A691F25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{500A7069-D860-4394-9251-64919A691F25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{500A7069-D860-4394-9251-64919A691F25}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4B772653-4473-4A3D-85D5-9A6C5DEF13B0}
 	EndGlobalSection
 EndGlobal
