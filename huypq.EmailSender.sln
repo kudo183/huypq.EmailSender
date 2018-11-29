@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "huypq.GmailSender", "huypq.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "huypq.gmailsender.console", "huypq.gmailsender.console\huypq.gmailsender.console.csproj", "{500A7069-D860-4394-9251-64919A691F25}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "huypq.Logging.Framework", "..\huypq.dotnet.lib\huypq.Logging\huypq.Logging.Framework\huypq.Logging.Framework.csproj", "{F4ABC0F4-C860-44A4-8BF7-58BE106E17E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "huypq.EmailTemplateProcessor", "huypq.EmailTemplateProcessor\huypq.EmailTemplateProcessor.csproj", "{FFE6291B-8972-4D05-A289-999CF2308FAC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{500A7069-D860-4394-9251-64919A691F25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{500A7069-D860-4394-9251-64919A691F25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{500A7069-D860-4394-9251-64919A691F25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4ABC0F4-C860-44A4-8BF7-58BE106E17E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4ABC0F4-C860-44A4-8BF7-58BE106E17E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4ABC0F4-C860-44A4-8BF7-58BE106E17E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4ABC0F4-C860-44A4-8BF7-58BE106E17E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFE6291B-8972-4D05-A289-999CF2308FAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFE6291B-8972-4D05-A289-999CF2308FAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFE6291B-8972-4D05-A289-999CF2308FAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFE6291B-8972-4D05-A289-999CF2308FAC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,16 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{500A7069-D860-4394-9251-64919A691F25}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>huypq.gmailsender.console</RootNamespace>
-    <AssemblyName>huypq.gmailsender.console</AssemblyName>
+    <ProjectGuid>{FFE6291B-8972-4D05-A289-999CF2308FAC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>huypq.EmailTemplateProcessor</RootNamespace>
+    <AssemblyName>huypq.EmailTemplateProcessor</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +23,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -42,20 +41,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="EmailTemplateProcessor.cs" />
+    <Compile Include="ISender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\huypq.dotnet.lib\huypq.Logging\huypq.Logging.Framework\huypq.Logging.Framework.csproj">
       <Project>{f4abc0f4-c860-44a4-8bf7-58be106e17e4}</Project>
       <Name>huypq.Logging.Framework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\huypq.EmailTemplateProcessor\huypq.EmailTemplateProcessor.csproj">
-      <Project>{ffe6291b-8972-4d05-a289-999cf2308fac}</Project>
-      <Name>huypq.EmailTemplateProcessor</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
