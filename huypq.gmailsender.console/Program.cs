@@ -32,7 +32,10 @@ namespace huypq.gmailsender.console
             var user = arguments["-u"];
             var pass = arguments["-p"];
 
-            var loggerProvider = new LoggerProvider((cat, logLevel) => logLevel >= LogLevel.Information, false, new LoggerProcessor());
+            var logWriters = new List<ILogBatchWriter>();
+            logWriters.Add(new ConsoleBatchWriter());
+            logWriters.Add(new ElasticsearchBatchWriter("http://localhost:9200", "mailsender"));
+            var loggerProvider = new LoggerProvider((cat, logLevel) => logLevel >= LogLevel.Information, false, new LoggerBatchingProcessor(logWriters));
             var gmailSender = new GmailSender(loggerProvider.CreateLogger<GmailSender>(), user, pass);
             if (args.Length == 7 && gmailSender.SendTestMail() == false)
             {
