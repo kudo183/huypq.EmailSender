@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -220,12 +221,15 @@ namespace huypq.gmailsender.console
 
         static void SendGmail(string to, string subject, string body)
         {
-            var client = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587)
+            var client = new SmtpClient("smtp.gmail.com", 587)
             {
                 Credentials = new System.Net.NetworkCredential(User, Password),
                 EnableSsl = true
             };
-            client.Send(User, to, subject, body);
+            var mail = new MailMessage(User, to, subject, body);
+            mail.IsBodyHtml = true;
+            mail.BodyTransferEncoding = System.Net.Mime.TransferEncoding.QuotedPrintable;
+            client.Send(mail);
         }
 
         static bool LoadTemplate()
