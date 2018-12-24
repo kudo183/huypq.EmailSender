@@ -12,13 +12,13 @@ namespace huypq.EmailTemplateProcessor
 
     public class Config
     {
-        public string SubjectTemplateFileNameSubfix = ".subject.txt";
-        public string BodyTemplateFileNameSubfix = ".body.html";
-        public string MailFolderPath = "./emails";
-        public string EmailKey = "$user";
-        public string PurposeKey = "$purpose";
-        public string ProcessedFolderName = "processed";
-        public string TemplateFolder = "template";
+        public string SubjectTemplateFileNameSubfix;
+        public string BodyTemplateFileNameSubfix;
+        public string MailFolderPath;
+        public string EmailKey;
+        public string PurposeKey;
+        public string ProcessedFolderName;
+        public string TemplateFolder;
         public int Interval;
     }
 

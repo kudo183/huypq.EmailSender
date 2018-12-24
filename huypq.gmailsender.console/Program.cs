@@ -3,54 +3,59 @@ using huypq.Logging;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Net.Http;
 using System.Net.Mail;
+using System.ServiceProcess;
 
 namespace huypq.gmailsender.console
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            if (args.Length != 6 && (args.Length != 7 || args[6] != "-t"))
-            {
-                PrintHelp();
-                return;
-            }
-            Dictionary<String, String> arguments = new Dictionary<string, string>();
-            arguments.Add(args[0], args[1]);
-            arguments.Add(args[2], args[3]);
-            arguments.Add(args[4], args[5]);
-            if (arguments.ContainsKey("-i") == false
-                || arguments.ContainsKey("-u") == false
-                || arguments.ContainsKey("-p") == false)
-            {
-                PrintHelp();
-                return;
-            }
+        public static string ServiceName = "ESP8266GmailSender";
 
-            int interval = int.Parse(arguments["-i"]) * 1000;
-            var user = arguments["-u"];
-            var pass = arguments["-p"];
+        public static void Start(string[] args)
+        {
+            int interval = int.Parse(ConfigurationManager.AppSettings["interval"]) * 1000;
+            var user = ConfigurationManager.AppSettings["user"];
+            var pass = ConfigurationManager.AppSettings["pass"];
+
+            //ensure elasticsearch is started
+            var elasticsearchURL = "http://localhost:9200";
+            var httpClient = new HttpClient();
+            var isElasticsearchStarted = false;
+            while (isElasticsearchStarted == false)
+            {
+                try
+                {
+                    var result = httpClient.GetAsync(elasticsearchURL).Result;
+                    isElasticsearchStarted = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+                System.Threading.Thread.Sleep(2000);
+            }
 
             var logWriters = new List<ILogBatchWriter>();
-            logWriters.Add(new ConsoleBatchWriter());
-            logWriters.Add(new ElasticsearchBatchWriter("http://localhost:9200", "mailsender"));
+            if (Environment.UserInteractive)
+            {
+                logWriters.Add(new ConsoleBatchWriter());
+            }
+            logWriters.Add(new ElasticsearchBatchWriter(elasticsearchURL, "mailsender"));
             var loggerProvider = new LoggerProvider((cat, logLevel) => logLevel >= LogLevel.Information, false, new LoggerBatchingProcessor(logWriters));
             var gmailSender = new GmailSender(loggerProvider.CreateLogger<GmailSender>(), user, pass);
-            if (args.Length == 7 && gmailSender.SendTestMail() == false)
-            {
-                return;
-            }
-
+            
             var config = new Config()
             {
-                SubjectTemplateFileNameSubfix = ".subject.txt",
-                BodyTemplateFileNameSubfix = ".body.html",
-                MailFolderPath = "./emails",
-                EmailKey = "$user",
-                PurposeKey = "$purpose",
-                ProcessedFolderName = "processed",
-                TemplateFolder = "template",
+                SubjectTemplateFileNameSubfix = ConfigurationManager.AppSettings["SubjectTemplateFileNameSubfix"],
+                BodyTemplateFileNameSubfix = ConfigurationManager.AppSettings["BodyTemplateFileNameSubfix"],
+                MailFolderPath = ConfigurationManager.AppSettings["MailFolderPath"],
+                EmailKey = ConfigurationManager.AppSettings["EmailKey"],
+                PurposeKey = ConfigurationManager.AppSettings["PurposeKey"],
+                ProcessedFolderName = ConfigurationManager.AppSettings["ProcessedFolderName"],
+                TemplateFolder = ConfigurationManager.AppSettings["TemplateFolder"],
                 Interval = interval
             };
 
@@ -60,18 +65,27 @@ namespace huypq.gmailsender.console
             if (processor.Start() == false)
                 return;
 
-            Console.Read();
+            if (Environment.UserInteractive == true)
+            {
+                Console.Read();
+            }
         }
 
-        static void PrintHelp()
+        static void Main(string[] args)
         {
-            Console.WriteLine("Example:");
-            Console.WriteLine("huypq.gmailsender.console.exe -i 10 -u mail@gmail.com -p password -t");
-            Console.WriteLine();
-            Console.WriteLine("\t-i\t interval (in seconds)");
-            Console.WriteLine("\t-u\t gmail address");
-            Console.WriteLine("\t-p\t gmail password");
-            Console.WriteLine("\t-t\t send test mail. Optional, must be last parameter if present.");
+            if (Environment.UserInteractive)
+            {
+                // running as console app
+                Start(args);
+            }
+            else
+            {
+                // running as service
+                using (var service = new MyService())
+                {
+                    ServiceBase.Run(service);
+                }
+            }
         }
     }
 
