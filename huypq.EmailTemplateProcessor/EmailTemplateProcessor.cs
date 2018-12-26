@@ -18,7 +18,7 @@ namespace huypq.EmailTemplateProcessor
         public string EmailKey;
         public string PurposeKey;
         public string ProcessedFolderName;
-        public string TemplateFolder;
+        public string TemplateFolderPath;
         public int Interval;
     }
 
@@ -166,7 +166,7 @@ namespace huypq.EmailTemplateProcessor
         bool LoadTemplate()
         {
             System.IO.DirectoryInfo templateDirectoryInfo = null;
-            string path = System.IO.Path.Combine(_config.MailFolderPath, _config.TemplateFolder);
+            string path = _config.TemplateFolderPath;
             if (System.IO.Directory.Exists(path) == false)
             {
                 return false;

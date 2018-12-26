@@ -55,7 +55,7 @@ namespace huypq.gmailsender.console
                 EmailKey = ConfigurationManager.AppSettings["EmailKey"],
                 PurposeKey = ConfigurationManager.AppSettings["PurposeKey"],
                 ProcessedFolderName = ConfigurationManager.AppSettings["ProcessedFolderName"],
-                TemplateFolder = ConfigurationManager.AppSettings["TemplateFolder"],
+                TemplateFolderPath = ConfigurationManager.AppSettings["TemplateFolderPath"],
                 Interval = interval
             };
 
