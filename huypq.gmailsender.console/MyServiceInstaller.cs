@@ -23,7 +23,7 @@ namespace huypq.gmailsender.console
 
             si.DisplayName = Program.ServiceName;
             si.ServiceName = Program.ServiceName;
-            si.ServicesDependedOn = new string[] { "mosquitto", "Elasticsearch" };
+            si.ServicesDependedOn = new string[] { "mosquitto" };
             si.StartType = ServiceStartMode.Automatic;
 
             Installers.Add(spi);
