@@ -20,33 +20,18 @@ namespace huypq.gmailsender.console
             var user = ConfigurationManager.AppSettings["user"];
             var pass = ConfigurationManager.AppSettings["pass"];
 
-            //ensure elasticsearch is started
-            var elasticsearchURL = "http://localhost:9200";
-            var httpClient = new HttpClient();
-            var isElasticsearchStarted = false;
-            while (isElasticsearchStarted == false)
-            {
-                try
-                {
-                    var result = httpClient.GetAsync(elasticsearchURL).Result;
-                    isElasticsearchStarted = true;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
-                System.Threading.Thread.Sleep(2000);
-            }
-
             var logWriters = new List<ILogBatchWriter>();
             if (Environment.UserInteractive)
             {
                 logWriters.Add(new ConsoleBatchWriter());
             }
-            logWriters.Add(new ElasticsearchBatchWriter(elasticsearchURL, "mailsender"));
+            var elasticsearchURL = ConfigurationManager.AppSettings["ElasticsearchUrl"];
+            var elasticsearchUser = ConfigurationManager.AppSettings["ElasticsearchUser"];
+            var elasticsearchPass = ConfigurationManager.AppSettings["ElasticsearchPass"];
+            logWriters.Add(new ElasticsearchBatchWriter(elasticsearchURL, "mailsender", elasticsearchUser, elasticsearchPass));
             var loggerProvider = new LoggerProvider((cat, logLevel) => logLevel >= LogLevel.Information, false, new LoggerBatchingProcessor(logWriters));
             var gmailSender = new GmailSender(loggerProvider.CreateLogger<GmailSender>(), user, pass);
-            
+
             var config = new Config()
             {
                 SubjectTemplateFileNameSubfix = ConfigurationManager.AppSettings["SubjectTemplateFileNameSubfix"],
